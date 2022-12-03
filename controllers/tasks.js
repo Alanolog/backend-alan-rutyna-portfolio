@@ -1,8 +1,11 @@
 const Task = require("../models/Task");
 const { StatusCodes } = require("http-status-codes");
+const { NotFoundError } = require("../errors/index");
 
 const createTask = async (req, res) => {
-  res.send("Task created");
+  req.body.createdBy = req.user.userId;
+  const task = await Task.create(req.body);
+  res.status(StatusCodes.CREATED).json({ task });
 };
 const deleteTask = async (req, res) => {
   res.send("Task deleted");
@@ -11,12 +14,22 @@ const updateTask = async (req, res) => {
   res.send("Task updated");
 };
 const getSingleTask = async (req, res) => {
-  res.send("Single task provided");
+  const {
+    user: { userId },
+    params: { id: taskId },
+  } = req;
+  const task = await Task.findById({
+    _id: taskId,
+    createdBy: userId,
+  });
+  if (!task) {
+    throw new NotFoundError(`there is no task with id: ${taskId}`);
+  }
+  res.status(StatusCodes.OK).json({ task });
 };
 const getAllTasks = async (req, res) => {
-  console.log(req.user);
-  const tasks = Task.find({ createdBy: req.user.userId });
-  res.status(StatusCodes.OK).json({ tasks });
+  const tasks = await Task.find({ createdBy: req.user.userId });
+  res.status(StatusCodes.OK).json({ tasks, nbOfTasks: tasks.length });
 };
 module.exports = {
   createTask,
