@@ -1,3 +1,6 @@
+const Task = require("../models/Task");
+const { StatusCodes } = require("http-status-codes");
+
 const createTask = async (req, res) => {
   res.send("Task created");
 };
@@ -11,7 +14,9 @@ const getSingleTask = async (req, res) => {
   res.send("Single task provided");
 };
 const getAllTasks = async (req, res) => {
-  res.send("Tasks");
+  console.log(req.user);
+  const tasks = Task.find({ createdBy: req.user.userId });
+  res.status(StatusCodes.OK).json({ tasks });
 };
 module.exports = {
   createTask,
