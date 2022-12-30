@@ -20,12 +20,12 @@ const deleteTask = async (req, res) => {
 };
 const updateTask = async (req, res) => {
   const {
-    body: { description, name },
+    body: { name },
     user: { userId },
     params: { id: taskId },
   } = req;
-  if (description === "" || name === "") {
-    throw new BadRequestError("description and name fields cannot be empty");
+  if (name === "") {
+    throw new BadRequestError("name field cannot be empty");
   }
   const task = await Task.findByIdAndUpdate(
     {
