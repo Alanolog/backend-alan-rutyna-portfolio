@@ -23,7 +23,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 const authenticationMiddleware = require("./middleware/authentication");
 
 app.set("trust proxy", 1);
-app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(rateLimiter({ windowMs: 5 * 60 * 1000, max: 1000 }));
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
